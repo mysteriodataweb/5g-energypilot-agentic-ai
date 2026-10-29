@@ -292,6 +292,22 @@ def _bound_kind(sentence: str, pct_start: int) -> str:
     return best[0]
 
 
+def safety_screen(text: str) -> list[Issue]:
+    """Deterministic screen applied to every instruction, whichever component interprets it."""
+    t = _normalise(text)
+    issues: list[Issue] = []
+    if _UNSAFE.search(t):
+        issues.append(Issue(code="unsupported_unsafe_request", severity="error",
+                            message="the request would disable equipment or bypass safety checks; not permitted"))  # fmt: skip
+    if _EXPORT.search(t):
+        issues.append(Issue(code="unsupported_export", severity="error",
+                            message="grid export is not supported by this site model"))  # fmt: skip
+    if _BATTERY_POWER_SETPOINT.search(t):
+        issues.append(Issue(code="unsupported_setpoint", severity="error",
+                            message="direct battery power set-points are not accepted; express a reserve or a grid limit"))  # fmt: skip
+    return issues
+
+
 def parse_instruction(text: str, issued_at_minute: int, config: AppConfig) -> ParseResult:
     """Interpret a natural-language (or JSON) instruction without any LLM."""
     started = time.perf_counter()
@@ -322,17 +338,7 @@ def parse_instruction(text: str, issued_at_minute: int, config: AppConfig) -> Pa
                    message="the instruction is not readable text; use the structured JSON interface")],
         )  # fmt: skip
 
-    issues: list[Issue] = []
-    if _UNSAFE.search(t):
-        issues.append(Issue(code="unsupported_unsafe_request", severity="error",
-                            message="the request would disable equipment or bypass safety checks; not permitted"))  # fmt: skip
-    if _EXPORT.search(t):
-        issues.append(Issue(code="unsupported_export", severity="error",
-                            message="grid export is not supported by this site model"))  # fmt: skip
-    if _BATTERY_POWER_SETPOINT.search(t):
-        issues.append(Issue(code="unsupported_setpoint", severity="error",
-                            message="direct battery power set-points are not accepted; express a reserve or a grid limit"))  # fmt: skip
-
+    issues: list[Issue] = safety_screen(text)
     reserves: list[dict] = []
     grid_limits: list[dict] = []
     all_windows: list[tuple[int, int]] = []
@@ -393,7 +399,7 @@ def parse_instruction(text: str, issued_at_minute: int, config: AppConfig) -> Pa
             pending.append(("grid", 0.0, si, windows, z.start(), z.end()))
 
     distinct_windows = sorted(set(all_windows))
-    for kind, value, si, windows, start, end in pending:
+    for kind, value, _si, windows, start, end in pending:
         if windows:
             window = _nearest_window(windows, start, end).minutes
         elif len(distinct_windows) == 1:

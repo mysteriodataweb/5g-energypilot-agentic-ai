@@ -226,7 +226,7 @@ class ForecastConfig(_Strict):
 
 
 class OptimizerConfig(_Strict):
-    solver: Literal["CBC", "HiGHS"] = "CBC"
+    solver: Literal["HiGHS", "CBC"] = "HiGHS"
     time_limit_s: float = Field(10.0, gt=0)
     battery_mode_binaries: bool = True
     replan_interval_steps: int = Field(4, ge=1)

@@ -15,6 +15,7 @@ dependencies = [
     "scipy>=1.11",
     "pydantic>=2.6",
     "pulp>=2.8,<3.0",
+    "highspy>=1.7",
     "python-dotenv>=1.0",
 ]
 

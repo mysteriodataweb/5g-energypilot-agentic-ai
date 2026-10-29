@@ -87,10 +87,15 @@ class OptimizationResult:
 def _solver(config: AppConfig, time_limit: float):
     name = config.optimizer.solver
     if name == "CBC":
-        return pulp.PULP_CBC_CMD(msg=False, timeLimit=time_limit, threads=1)
-    if name == "HiGHS":
-        return pulp.HiGHS(msg=False, timeLimit=time_limit)
-    raise OptimizerError(f"unsupported solver '{name}'")
+        solver = pulp.PULP_CBC_CMD(msg=False, timeLimit=time_limit, threads=1)
+    elif name == "HiGHS":
+        solver = pulp.HiGHS(msg=False, timeLimit=time_limit)
+    else:
+        raise OptimizerError(f"unsupported solver '{name}'")
+    if not solver.available():
+        hint = "pip install highspy" if name == "HiGHS" else "reinstall pulp<3 (bundled CBC)"
+        raise OptimizerError(f"solver {name} is not available ({hint}) - or select another solver in the config")
+    return solver
 
 
 def optimize(

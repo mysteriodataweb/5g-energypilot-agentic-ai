@@ -13,7 +13,7 @@
 │   ├── simulator/               physics (battery, base-station power, QoS) + closed-loop environment
 │   ├── instructions/            strict schema, semantic validation, deterministic parser, compiled constraints
 │   ├── controllers/             rule-based controller, MPC execution of the optimiser, forecast roll-outs
-│   ├── optimizer/               MILP scheduler (PuLP/CBC) + infeasibility diagnosis
+│   ├── optimizer/               MILP scheduler (PuLP/HiGHS) + infeasibility diagnosis
 │   ├── safety/                  independent validator, runtime shield, hash-chained audit log
 │   ├── agent/                   LLM interface + adapters, typed tools, interpretation, orchestrator, reports
 │   └── evaluation/              episodes, metrics, statistics, benchmark, report generation

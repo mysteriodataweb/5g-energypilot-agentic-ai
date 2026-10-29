@@ -113,7 +113,7 @@ pv_decay_per_step = 0.85
 traffic_decay_per_step = 0.90
 
 [optimizer]
-solver = "CBC"                  # bundled with PuLP; "HiGHS" needs highspy
+solver = "HiGHS"                # in-process (highspy); "CBC" = bundled with PuLP (see docs: occasional stalls)
 time_limit_s = 10.0
 battery_mode_binaries = true    # MILP: forbid simultaneous charge and discharge
 replan_interval_steps = 4       # MPC re-planning period (4 x 15 min = 1 h)

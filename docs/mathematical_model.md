@@ -95,7 +95,7 @@ A validated instruction (`energypilot/instructions/schema.py`) is compiled per s
 
 ## 7. MILP scheduler (`energypilot/optimizer/milp.py`)
 
-Model class: **mixed-integer linear programme** (PuLP + CBC; HiGHS optional). For the remaining
+Model class: **mixed-integer linear programme** (PuLP; HiGHS by default, CBC optional). For the remaining
 horizon `k = 0 … n-1` starting at the current step, with forecasts `pv[k]`, `λ[k]`, `price[k]`:
 
 Variables: `p_ch, p_dis ∈ [0, P_max]`, `grid ∈ [0, G_max]`, `curt ∈ [0, pv]`, `c ∈ [c_req, 1]`,
@@ -125,7 +125,15 @@ with `w_term = 0.40 EUR/kWh` (above the highest price divided by `η_dis`, so dr
 the horizon end never pays) and `c_curt = 0.001` (tie-breaker). The end-of-day target is the SoC at
 00:00 (soft, so a demanding instruction is never declared infeasible because of it).
 
-Size for a full day: 673 variables (96 binaries), ~390 constraints; CBC solves it in < 0.1 s.
+Size for a full day: 673 variables (96 binaries), ~390 constraints; solved in tens of milliseconds.
+
+**Solver choice (measured).** The first reference runs used CBC through PuLP's command-line interface.
+In 84 of 840 episodes (≈ 0.85 % of 9 860 MPC re-plans) a solve ran to the 10 s time limit although the
+same problem normally solves in ~20 ms; the stalls were not deterministic (identical inputs stalled in
+one episode and not in another), and the returned schedules were still optimal (costs were identical
+across runs), so only latency was affected. On 24 test episodes CBC stalled in 6 and HiGHS in none,
+with the same costs up to alternative optima and a 4× shorter run time; HiGHS (in-process) is therefore
+the default. CBC remains selectable.
 
 **No silent relaxation.** If the hard constraints cannot all be met, the status is `infeasible`
 (proved by the solver, or by a pre-solve check when the current SoC is already below an active

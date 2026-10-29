@@ -3,8 +3,10 @@ numpy>=1.26
 pandas>=2.1
 scipy>=1.11
 pydantic>=2.6
-# PuLP 2.x ships the CBC MILP solver. PuLP 3/4 changed the modelling API.
+# PuLP 2.x modelling API (PuLP 3/4 changed it). Default solver: HiGHS (in-process, highspy);
+# PuLP also bundles CBC as an alternative.
 pulp>=2.8,<3.0
+highspy>=1.7
 python-dotenv>=1.0
 
 # Dashboard

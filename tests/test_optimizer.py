@@ -108,11 +108,19 @@ def test_lp_variant_and_other_solver(config):
     lp = optimize(config.with_overrides({"optimizer": {"battery_mode_binaries": False}}), cons, fc, 20.0, terminal_target_kwh=20.0)
     assert lp.model_class == "LP" and lp.n_binaries == 0
     assert lp.objective_value <= base.objective_value + 1e-6  # LP relaxation lower bound
+    assert base.solver == "HiGHS"  # default
+    cbc = optimize(config.with_overrides({"optimizer": {"solver": "CBC"}}), cons, fc, 20.0, terminal_target_kwh=20.0)
+    assert cbc.solver == "CBC" and cbc.feasible
+    assert cbc.objective_value == pytest.approx(base.objective_value, rel=1e-4)  # same optimum, both solvers
+
+
+def test_unavailable_solver_is_a_tool_error(config, monkeypatch):
     import pulp
 
-    if "HiGHS" in pulp.listSolvers(onlyAvailable=True):
-        highs = optimize(config.with_overrides({"optimizer": {"solver": "HiGHS"}}), cons, fc, 20.0, terminal_target_kwh=20.0)
-        assert highs.objective_value == pytest.approx(base.objective_value, rel=1e-4)
+    fc, cons = _setup(config)
+    monkeypatch.setattr(pulp.HiGHS, "available", lambda self: False)
+    with pytest.raises(OptimizerError, match="not available"):
+        optimize(config, cons, fc, 20.0)
 
 
 def test_invalid_inputs_raise_tool_error(config):

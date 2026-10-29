@@ -22,7 +22,7 @@ from energypilot.config.settings import AppConfig
 from energypilot.data import profiles
 from energypilot.data.profiles import ProfileEvent
 
-ExpectedOutcome = Literal["accept", "clarify", "reject"]
+ExpectedOutcome = Literal["accept", "clarify", "reject", "unknown"]  # "unknown": custom instruction
 
 PROVENANCE: dict[str, str] = {
     "pv_actual_kw": "synthetic measurement (generated: clear-sky model x stochastic cloud attenuation x events)",
@@ -51,6 +51,9 @@ class ScenarioSpec:
     events: tuple[ProfileEvent, ...] = ()
     initial_soc_pct: float | None = None
     tags: tuple[str, ...] = ()
+    # Held-out rephrasings with the same ground truth (written after the deterministic
+    # parser was developed; the parser was not tuned on them).
+    paraphrases: tuple[str, ...] = ()
 
 
 @dataclass
@@ -91,6 +94,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
     for spec in (
         ScenarioSpec(
             name="normal",
+            paraphrases=(
+                "For the next 120 minutes the state of charge must not go below 70 %. Keep the electricity bill as low as possible without degrading service quality.",
+                "Pendant les deux heures qui viennent, garde au minimum 70 % de batterie, avec des coûts d'électricité minimaux et la qualité de service requise.",
+            ),
             title="1. Normal operation",
             description="Sunny day, nominal traffic. Start-of-day instruction with a short reserve.",
             weather="sunny",
@@ -112,6 +119,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
         ),
         ScenarioSpec(
             name="solar_drop",
+            paraphrases=(
+                "Between 5 pm and 9 pm the battery should hold no less than sixty percent; otherwise optimise for the cheapest electricity.",
+                "Entre 17h et 21h, la batterie doit rester au-dessus de 60 %. Pour le reste, minimiser les coûts.",
+            ),
             title="2. Sudden decrease in solar production",
             description="Forecast sunny; an unforeseen cloud bank cuts PV by 80% from 11:00 to 16:00.",
             weather="sunny",
@@ -132,6 +143,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
         ),
         ScenarioSpec(
             name="traffic_peak",
+            paraphrases=(
+                "Big event in town tonight: QoS must be strict all day, and we still want the lowest electricity cost.",
+                "Événement public aujourd'hui : qualité de service stricte exigée, tout en réduisant les coûts.",
+            ),
             title="3. Unexpected traffic peak",
             description="An unforeseen public event adds +0.45 normalised traffic from 18:00 to 21:30.",
             weather="partly_cloudy",
@@ -153,6 +168,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
         ),
         ScenarioSpec(
             name="reserve_increase",
+            paraphrases=(
+                "Storm expected this evening, so keep at least 80% state of charge from 6pm until 11pm, and keep costs down.",
+                "Alerte tempête : réserve minimale de 80 % de 18h00 à 23h00, en continuant à minimiser les coûts.",
+            ),
             title="4. Temporary increase in minimum battery reserve",
             description="Storm warning at 14:00: the reserve must be raised for the evening.",
             weather="partly_cloudy",
@@ -173,6 +192,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
         ),
         ScenarioSpec(
             name="high_traffic_low_solar",
+            paraphrases=(
+                "The grid operator asks us to draw no more than 2 kW from the grid from 18:00 to 20:00; keep standard QoS and minimise cost the rest of the time.",
+                "Effacement demandé par le gestionnaire de réseau : soutirage limité à 2 kW entre 18h et 20h, qualité de service standard, coûts minimaux sinon.",
+            ),
             title="5. High traffic and low solar production",
             description=(
                 "Overcast day and traffic 25% above forecast, combined with a demand-response "
@@ -197,6 +220,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
         ),
         ScenarioSpec(
             name="infeasible_instruction",
+            paraphrases=(
+                "From 17:00 to 21:00 run without any grid import while keeping the battery at 90% or more, strict QoS.",
+                "De 17h à 21h, aucun soutirage réseau et batterie au-dessus de 90 %, avec une qualité de service stricte.",
+            ),
             title="6. Infeasible / contradictory instruction",
             description=(
                 "A 90% reserve combined with zero grid import over the evening peak cannot be "
@@ -220,6 +247,10 @@ SCENARIOS: dict[str, ScenarioSpec] = {
         ),
         ScenarioSpec(
             name="ambiguous_instruction",
+            paraphrases=(
+                "Make sure we have enough battery later today, and be efficient.",
+                "Garde une bonne charge de batterie ce soir et économise de l'énergie.",
+            ),
             title="7. Malformed / ambiguous instruction",
             description="Vague instruction without a reserve level or time window.",
             weather="partly_cloudy",

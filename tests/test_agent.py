@@ -151,14 +151,24 @@ def test_prompt_injection_is_screened_deterministically(config):
 
 
 def test_llm_timeout_falls_back_to_deterministic_parser(config):
-    llm = ScriptedLLMClient([LLMTimeoutError("no answer within 30 s"), LLMTimeoutError("again")])
+    llm = ScriptedLLMClient([LLMTimeoutError("no answer within 30 s")])  # any further call would fail the test
     out, audit = run_pipeline(config, llm)
     r = out.report
     assert r.status == DecisionStatus.ACCEPTED
     assert r.interpretation_method == "deterministic_rules"
     assert r.orchestration_mode == "llm->deterministic_fallback"
-    assert len(r.fallback_reasons) == 2 and len(r.llm_usage.failures) == 2
-    assert len(audit.events("llm_failure")) == 2
+    assert len(r.fallback_reasons) == 1 and len(r.llm_usage.failures) == 1
+    assert len(audit.events("llm_failure")) == 1
+    assert len(llm.calls) == 1  # circuit breaker: one timeout per decision at most
+
+
+def test_llm_timeout_during_orchestration(config):
+    llm = ScriptedLLMClient([interp(), ScriptedTurn(tool_calls=[("run_optimizer", {})]), LLMTimeoutError("slow")])
+    out, _ = run_pipeline(config, llm)
+    r = out.report
+    assert r.status == DecisionStatus.ACCEPTED and r.interpretation_method.startswith("llm:")
+    assert r.orchestration_mode == "llm->deterministic_fallback"
+    assert [c["caller"] for c in r.tool_calls] == ["llm", "deterministic:agent", "deterministic:agent"]
 
 
 def test_malformed_tool_call_falls_back(config):

@@ -1,0 +1,4 @@
+# Optional: install only the provider you configure in .env (LLM_PROVIDER).
+# The application runs without any of these, in deterministic fallback mode.
+anthropic>=0.40
+openai>=1.40

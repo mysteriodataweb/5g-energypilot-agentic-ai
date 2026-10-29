@@ -1,0 +1,4 @@
+approach,episodes,correct_handling_rate,interpretation_match_rate,accepted_rate,intent_fully_compliant_rate,hard_violation_steps_total,median_decision_latency_s,p95_decision_latency_s,tool_call_failures,llm_calls
+agent[deterministic-fallback],50,1.0,1.0,1.0,1.0,0,0.005976708499929373,0.0075451796494689916,50,0
+optimizer,50,0.0,1.0,0.0,0.22,0,0.0004663724998863472,0.0005878661501355963,50,0
+rule_based,50,1.0,1.0,1.0,1.0,0,0.005400674999691546,0.007248297100295531,0,0

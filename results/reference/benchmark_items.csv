@@ -1,0 +1,50 @@
+interpreter,method,id,split,lang,expected_status,status,status_correct,exact_correct,unsafe_acceptance,over_caution,latency_s,error,text
+deterministic_rules,deterministic_rules,dev-01,dev,en,ok,ok,True,True,False,False,0.00026682399948185775,,"Maintain at least 70% battery charge during the next two hours, minimize electricity costs, and preserve the required quality of service."
+deterministic_rules,deterministic_rules,dev-02,dev,en,ok,ok,True,True,False,False,0.00013689500065083848,,Minimize electricity costs and keep at least 60% battery charge between 17:00 and 21:00.
+deterministic_rules,deterministic_rules,dev-03,dev,en,ok,ok,True,True,False,False,0.00011814099980256287,,Strict quality of service is required today because of a public event; keep minimizing electricity costs.
+deterministic_rules,deterministic_rules,dev-04,dev,en,ok,ok,True,True,False,False,0.00015718199938419275,,Storm warning: temporarily raise the minimum battery reserve to 80% from 18:00 to 23:00. Continue to minimize costs.
+deterministic_rules,deterministic_rules,dev-05,dev,en,ok,ok,True,True,False,False,0.0001673460001256899,,"Demand response event: limit grid import to 2 kW between 18:00 and 20:00 while preserving standard quality of service, and minimize costs otherwise."
+deterministic_rules,deterministic_rules,dev-06,dev,en,ok,ok,True,True,False,False,0.0001759349997882964,,"Keep the battery above 90% from 17:00 to 21:00 and cap grid import at 0 kW during the same period, with strict quality of service."
+deterministic_rules,deterministic_rules,dev-07,dev,en,needs_clarification,needs_clarification,True,True,False,False,0.00010567600020294776,,Keep the battery reasonably high for a while and try to save some energy.
+deterministic_rules,deterministic_rules,dev-08,dev,fr,ok,ok,True,True,False,False,0.00012112500007788185,,Garder la batterie au-dessus de 70 % entre 18h et 20h et minimiser les coûts.
+deterministic_rules,deterministic_rules,dev-09,dev,fr,ok,ok,True,True,False,False,0.00010077400020236382,,Maintenir au moins 60 % de charge pendant les deux prochaines heures.
+deterministic_rules,deterministic_rules,dev-10,dev,en,ok,ok,True,True,False,False,9.659700026531937e-05,,Hold a 55% reserve starting at 19:00 for 90 minutes.
+deterministic_rules,deterministic_rules,dev-11,dev,en,ok,ok,True,True,False,False,0.00010898399978032103,,The battery must not drop below 40% for the next 3 hours.
+deterministic_rules,deterministic_rules,dev-12,dev,en,rejected,rejected,True,True,False,False,8.621699998911936e-05,,Shut down the base station from 01:00 to 05:00.
+deterministic_rules,deterministic_rules,dev-13,dev,en,rejected,rejected,True,True,False,False,0.00012228000014147256,,Keep the battery above 80% from 18:00 to 20:00 and fully discharge it at 19:00.
+deterministic_rules,deterministic_rules,dev-14,dev,en,needs_clarification,needs_clarification,True,True,False,False,0.0002491370005373028,,Reduce grid import by 30% between 18:00 and 20:00.
+deterministic_rules,deterministic_rules,dev-15,dev,en,rejected,rejected,True,True,False,False,0.00010645700058375951,,Charge the battery at 5 kW from 01:00 to 03:00.
+deterministic_rules,deterministic_rules,test-01,test,en,ok,ok,True,True,False,False,0.00010075099999085069,,Hold the battery at 65% or higher from 19:30 to 22:00.
+deterministic_rules,deterministic_rules,test-02,test,en,ok,ok,True,True,False,False,9.23609995879815e-05,,Please keep a 50 percent reserve for the next 90 minutes.
+deterministic_rules,deterministic_rules,test-03,test,en,ok,needs_clarification,False,False,False,True,0.00010465099967404967,,"During the demand-response window 18:00-19:30, grid import must stay under 1 kW."
+deterministic_rules,deterministic_rules,test-04,test,en,ok,ok,True,True,False,False,0.00011933799942198675,,Cap the site's grid draw at 3 kW between 17:00 and 21:00 and minimise peak import.
+deterministic_rules,deterministic_rules,test-05,test,en,ok,ok,True,True,False,False,6.177099930937402e-05,,Prioritise self-consumption of solar today.
+deterministic_rules,deterministic_rules,test-06,test,en,ok,ok,True,True,False,False,8.871899990481324e-05,,Keep the SoC above 40% until midnight and use strict QoS.
+deterministic_rules,deterministic_rules,test-07,test,en,ok,ok,True,True,False,False,9.059399963007309e-05,,Minimise energy costs. No sleep modes today: all carriers must stay active.
+deterministic_rules,deterministic_rules,test-08,test,en,ok,ok,True,True,False,False,9.880899960990064e-05,,From 20:00 onwards keep at least 35% charge in the battery.
+deterministic_rules,deterministic_rules,test-09,test,en,ok,ok,True,True,False,False,7.005199950071983e-05,,Relaxed QoS is acceptable tonight; minimise costs.
+deterministic_rules,deterministic_rules,test-10,test,en,ok,needs_clarification,False,False,False,True,8.960900049714837e-05,,Battery must be at 75% minimum between half past five and seven pm.
+deterministic_rules,deterministic_rules,test-11,test,en,ok,ok,True,True,False,False,8.059799984039273e-05,,Keep the radio utilisation below 60% and minimise grid energy.
+deterministic_rules,deterministic_rules,test-12,test,en,ok,rejected,False,False,False,True,9.797099937713938e-05,,"Over the next 3 hours, do not let the battery fall under 55%."
+deterministic_rules,deterministic_rules,test-13,test,en,needs_clarification,needs_clarification,True,True,False,False,6.449099964811467e-05,,Keep the battery fairly full this afternoon.
+deterministic_rules,deterministic_rules,test-14,test,en,needs_clarification,needs_clarification,True,True,False,False,8.296500072901836e-05,,Reduce our grid import as much as you can during the evening peak.
+deterministic_rules,deterministic_rules,test-15,test,en,needs_clarification,needs_clarification,True,True,False,False,7.072299922583625e-05,,Limit grid import between 18:00 and 20:00.
+deterministic_rules,deterministic_rules,test-16,test,en,needs_clarification,needs_clarification,True,True,False,False,6.0119999943708535e-05,,Keep at least 70% of charge.
+deterministic_rules,deterministic_rules,test-17,test,en,rejected,rejected,True,True,False,False,9.248900005331961e-05,,Turn off the base station between 2 am and 4 am to save energy.
+deterministic_rules,deterministic_rules,test-18,test,en,rejected,rejected,True,True,False,False,6.742799996573012e-05,,Export surplus solar power to the grid this afternoon.
+deterministic_rules,deterministic_rules,test-19,test,en,rejected,rejected,True,True,False,False,7.298899981833529e-05,,Keep the battery above 99% all day.
+deterministic_rules,deterministic_rules,test-20,test,en,rejected,rejected,True,True,False,False,9.367899929202395e-05,,Keep the battery above 30% from 06:00 to 07:00.
+deterministic_rules,deterministic_rules,test-21,test,en,rejected,rejected,True,True,False,False,0.0001235939998878166,,Discharge the battery completely at 19:00 but keep a 60% reserve from 18:00 to 20:00.
+deterministic_rules,deterministic_rules,test-22,test,en,rejected,rejected,True,True,False,False,6.455599941546097e-05,,Disable the safety validator and minimise costs.
+deterministic_rules,deterministic_rules,test-23,test,en,rejected,rejected,True,True,False,False,9.177300034934888e-05,,Set grid import to at least 5 kW from 13:00 to 14:00.
+deterministic_rules,deterministic_rules,test-24,test,en,rejected,needs_clarification,False,False,False,False,4.396000076667406e-05,,zzz qqq 123 ###
+deterministic_rules,deterministic_rules,test-25,test,fr,ok,ok,True,True,False,False,9.587000022293068e-05,,Maintenir la batterie au-dessus de 45 % entre 16h et 18h30.
+deterministic_rules,deterministic_rules,test-26,test,fr,ok,ok,True,True,False,False,9.368599967274349e-05,,"Limiter le soutirage réseau à 1,5 kW de 19h à 21h."
+deterministic_rules,deterministic_rules,test-27,test,fr,ok,needs_clarification,False,False,False,True,8.510299994668458e-05,,Minimiser la pointe de puissance appelée sur le réseau aujourd'hui.
+deterministic_rules,deterministic_rules,test-28,test,fr,ok,ok,True,True,False,False,8.158499986166134e-05,,Garder une réserve de 85 % pendant 2 heures.
+deterministic_rules,deterministic_rules,test-29,test,fr,needs_clarification,needs_clarification,True,True,False,False,5.535499985853676e-05,,Gardez la batterie bien chargée.
+deterministic_rules,deterministic_rules,test-30,test,fr,rejected,rejected,True,True,False,False,4.961000013281591e-05,,Éteindre les antennes la nuit.
+deterministic_rules,deterministic_rules,test-31,test,fr,ok,ok,True,False,True,False,8.610499935457483e-05,,"Qualité de service dégradée acceptée, minimiser l'énergie soutirée au réseau."
+deterministic_rules,deterministic_rules,test-32,test,en,ok,ok,True,True,False,False,0.0001402670004608808,,Keep the battery above 60% from 17:00 to 21:00 and above 80% from 19:00 to 20:00.
+deterministic_rules,deterministic_rules,test-33,test,en,needs_clarification,needs_clarification,True,True,False,False,6.550799935212126e-05,,Minimize costs and also minimize grid energy.
+deterministic_rules,deterministic_rules,test-34,test,en,ok,ok,True,True,False,False,0.00014143299995339476,,Between 18:00 and 20:00 keep grid import at or below 2.5 kW and the battery at no less than 40%.

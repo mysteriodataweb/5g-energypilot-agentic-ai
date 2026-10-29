@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from energypilot.config.settings import AppConfig
-from energypilot.core.types import ControlAction, InvalidActionError, Observation
+from energypilot.core.types import ControlAction, Forecast, InvalidActionError, Observation
 from energypilot.simulator import physics
 
 logger = logging.getLogger(__name__)
@@ -92,6 +92,28 @@ class BaseStationEnv:
         self.price = np.asarray(price_eur_per_kwh, dtype=float)
         self.initial_soc_kwh = bat.pct_to_kwh(initial_soc_pct)
         self.reset()
+
+    @classmethod
+    def from_forecast(cls, config: AppConfig, forecast: Forecast, energy_kwh: float) -> "BaseStationEnv":
+        """Environment that replays a *forecast* from ``forecast.start_step``.
+
+        Used to roll a policy out ex ante with exactly the simulator's physics.
+        """
+        n = config.simulation.n_steps
+        start = forecast.start_step
+        if start + len(forecast) != n:
+            raise ValueError("forecast must cover the remaining horizon")
+        arrays = []
+        for values in (forecast.pv_kw, forecast.traffic, forecast.price_eur_per_kwh):
+            full = np.zeros(n)
+            full[start:] = values
+            arrays.append(full)
+        bat = config.battery
+        energy = float(np.clip(energy_kwh, bat.e_min_kwh, bat.e_max_kwh))
+        env = cls(config, *arrays, initial_soc_pct=bat.kwh_to_pct(energy))
+        env.step_index = start
+        env.energy_kwh = energy
+        return env
 
     # ------------------------------------------------------------------ state
     def reset(self) -> Observation:

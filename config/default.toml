@@ -131,8 +131,9 @@ peak_shaving_threshold_kw = 3.0   # used when the objective is peak import
 
 [agent]
 max_orchestration_turns = 8
-llm_timeout_s = 30.0
-max_tokens = 1500
+llm_timeout_s = 60.0          # per LLM request
+llm_max_retries = 1           # SDK retries (timeouts are retried too)
+max_tokens = 16000            # output cap per LLM request (reasoning models need room)
 max_instruction_chars = 1000
 
 [safety]

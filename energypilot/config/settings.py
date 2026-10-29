@@ -246,8 +246,9 @@ class RuleControllerConfig(_Strict):
 
 class AgentConfig(_Strict):
     max_orchestration_turns: int = Field(8, ge=1, le=30)
-    llm_timeout_s: float = Field(30.0, gt=0)
-    max_tokens: int = Field(1500, ge=64)
+    llm_timeout_s: float = Field(60.0, gt=0)
+    llm_max_retries: int = Field(1, ge=0, le=5)
+    max_tokens: int = Field(16000, ge=256)
     max_instruction_chars: int = Field(1000, ge=10)
 
 

@@ -50,7 +50,8 @@ def handling_table(runs: pd.DataFrame, by: tuple[str, ...] = ("approach", "input
             "accepted_rate": g.decision_status.apply(lambda s: (s == "accepted").mean()),
             "intent_fully_compliant_rate": g.intent_fully_compliant.apply(lambda s: s.dropna().astype(float).mean()),
             "hard_violation_steps_total": g.hard_violation_steps.sum(),
-            "mean_decision_latency_s": g.decision_latency_s.mean(),
+            "median_decision_latency_s": g.decision_latency_s.median(),
+            "p95_decision_latency_s": g.decision_latency_s.quantile(0.95),
             "tool_call_failures": g.tool_call_failures.sum(),
             "llm_calls": g.llm_calls.sum(),
         }

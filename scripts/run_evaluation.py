@@ -120,8 +120,14 @@ def main() -> None:
             markdown_table(mean_with_ci(nl_summary, "active_qos_exogenous_steps", digits=1)),
             "## E1 - Paired differences on the same synthetic days (approach - baseline), canonical text",
             markdown_table(paired, ["scenario", "approach", "baseline", "metric", "mean_diff", "ci95_low", "ci95_high", "n"]),
-            "## E1 - Decision latency (s) at instruction time, canonical text",
-            markdown_table(mean_with_ci(nl_summary, "decision_latency_s", digits=3)),
+            "## E1 - Decision latency at instruction time (s), canonical text: median and 95th percentile",
+            "Wall-clock times on the machine that ran the experiment; medians are robust to scheduling outliers.",
+            markdown_table(
+                nl.groupby(["scenario", "approach"]).decision_latency_s.agg(
+                    median="median", p95=lambda s: s.quantile(0.95), max="max"
+                ).reset_index(),
+                digits=4,
+            ),
         ]
 
     if "robustness" in args.experiments:

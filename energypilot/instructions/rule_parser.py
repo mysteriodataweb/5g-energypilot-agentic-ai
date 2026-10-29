@@ -156,7 +156,7 @@ _UNSAFE = re.compile(
     r"\b(shut ?down|switch off|turn off|power off|power down|disable|deactivate|éteindre|couper|désactiver|arrêter)\s+"
     r"(?:the\s+|le\s+|la\s+|les\s+|l')?(?:whole\s+|entire\s+)?(base station|site|cell site|station|bts|gnodeb|gnb|"
     r"enodeb|radios?|antennas?|cells|network|antennes?)\b|"
-    r"\b(bypass|ignore|override|skip|contourner|ignorer)\s+(?:the\s+|la\s+|le\s+|les\s+)?(?:\w+\s+)?"
+    r"\b(bypass|ignore|override|skip|disable|deactivate|turn off|switch off|contourner|ignorer|désactiver)\s+(?:the\s+|la\s+|le\s+|les\s+)?(?:\w+\s+)?"
     r"(safety|validator|validation|limits?|constraints?|sécurité|contraintes?|limites?)\b"
 )
 _EXPORT = re.compile(r"\b(export|sell|inject|revendre|injecter)\b[^.;]{0,40}\b(grid|réseau)\b")

@@ -156,6 +156,8 @@ class DecisionPipeline:
             )  # fmt: skip
 
         def llm_failed(phase: str, exc: LLMError) -> None:
+            # Circuit breaker: after one failure the rest of this decision is deterministic,
+            # which bounds the worst-case latency to a single LLM timeout per instruction.
             msg = f"{phase}: {type(exc).__name__}: {exc}"
             usage.failures.append(msg)
             fallback.append(f"LLM {phase} failed ({type(exc).__name__}); deterministic fallback used")
@@ -191,7 +193,9 @@ class DecisionPipeline:
         validated = parse.instruction
         toolbox = AgentToolbox(ctx, validated, validator=self.validator, audit=audit, faults=self.faults)
         mode, submitted, overridden = "deterministic", None, False
-        if self.llm is not None:
+        if self.llm is not None and usage.failures:
+            mode = "llm->deterministic_fallback"
+        elif self.llm is not None:
             try:
                 submitted = self._llm_orchestrate(toolbox, text, on_llm_call)
                 mode = "llm"

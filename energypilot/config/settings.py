@@ -241,6 +241,7 @@ class RuleControllerConfig(_Strict):
     offpeak_charge_target_pct: float = Field(50.0, ge=0, le=100)
     offpeak_charge_power_kw: float = Field(5.0, ge=0)
     reserve_precharge_margin: float = Field(1.3, ge=1.0)
+    peak_shaving_threshold_kw: float = Field(3.0, ge=0)
 
 
 class AgentConfig(_Strict):

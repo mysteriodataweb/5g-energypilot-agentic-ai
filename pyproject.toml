@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dashboard = ["streamlit>=1.36", "plotly>=5.20"]
+dashboard = ["streamlit>=1.50", "plotly>=5.20"]
 llm = ["anthropic>=0.40", "openai>=1.40"]
 dev = ["pytest>=8.0"]
 

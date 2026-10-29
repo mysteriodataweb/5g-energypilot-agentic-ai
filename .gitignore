@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Generated artefacts (regenerate with the scripts in scripts/)
+runs/
+data/generated/
+results/*
+!results/README.md
+!results/reference/
+results/reference/*
+!results/reference/*.csv
+!results/reference/*.json
+!results/reference/*.md
+
+# Solver scratch files
+*.mps
+*.lp
+*.sol
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

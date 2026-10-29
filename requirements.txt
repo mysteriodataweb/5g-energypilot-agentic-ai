@@ -1,0 +1,17 @@
+# Core (simulation, optimisation, validation, evaluation)
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+pydantic>=2.6
+# PuLP 2.x ships the CBC MILP solver. PuLP 3/4 changed the modelling API.
+pulp>=2.8,<3.0
+python-dotenv>=1.0
+
+# Dashboard
+streamlit>=1.36
+plotly>=5.20
+
+# Tests
+pytest>=8.0
+
+# Optional LLM providers: see requirements-llm.txt

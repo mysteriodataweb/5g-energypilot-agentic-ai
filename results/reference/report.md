@@ -1,6 +1,6 @@
 # Experiment results
 
-Generated 2026-10-29T04:03:33+00:00 by `scripts/run_evaluation.py` (commit 85105a3). Seeds: 10. Solver: HiGHS. LLM: none configured - the agent ran in deterministic fallback mode; no LLM results are reported.
+Generated 2026-10-29T04:03:33+00:00 by `scripts/run_evaluation.py` (commit 8e2b25d). Seeds: 10. Solver: HiGHS. LLM: none configured - the agent ran in deterministic fallback mode; no LLM results are reported.
 
 > All numbers come from executed closed-loop simulations on **synthetic** data. They are not measurements of a real base station and must not be read as real-world operational results.
 

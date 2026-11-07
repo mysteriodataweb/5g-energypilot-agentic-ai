@@ -230,7 +230,7 @@ All numbers below come from executed closed-loop simulations on **synthetic** da
 
 <!-- RESULTS:START -->
 
-Reference run: 10 seeds, solver HiGHS, commit `85105a3`, generated 2026-10-29T04:03:33+00:00. LLM: **none** (agent in deterministic fallback mode). Full report: [results/reference/report.md](results/reference/report.md).
+Reference run: 10 seeds, solver HiGHS, commit `8e2b25d`, generated 2026-10-29T04:03:33+00:00. LLM: **none** (agent in deterministic fallback mode). Full report: [results/reference/report.md](results/reference/report.md).
 
 **Instruction handling** (all 7 scenarios × seeds; *interpretation = truth* compares the parsed instruction with the label; *intent fully met* = no violation of the operator's intended instruction):
 

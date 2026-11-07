@@ -286,9 +286,14 @@ def test_structured_json_bypasses_llm(config):
 def test_factory(config, monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "none")
     assert create_llm_client(LLMSettings.from_env(config, load_dotenv_file=False)) is None
-    monkeypatch.setenv("LLM_PROVIDER", "anthropic")
+    monkeypatch.setenv("LLM_PROVIDER", "groq")
     monkeypatch.setenv("LLM_MODEL", "")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
     with pytest.raises(LLMConfigurationError):
+        create_llm_client(LLMSettings.from_env(config, load_dotenv_file=False))
+    monkeypatch.setenv("LLM_MODEL", "model-under-test")
+    monkeypatch.setenv("GROQ_API_KEY", "")
+    with pytest.raises(LLMConfigurationError):  # missing key is a configuration error, not a runtime failure
         create_llm_client(LLMSettings.from_env(config, load_dotenv_file=False))
     monkeypatch.setenv("LLM_PROVIDER", "mystery")
     with pytest.raises(LLMConfigurationError):
@@ -344,37 +349,25 @@ TOOLS = [ToolSpec("noop", "does nothing", {"type": "object", "properties": {}, "
 MSGS = [Message(role="user", text="hi")]
 
 
-def test_anthropic_adapter_error_mapping(silent_server):
-    pytest.importorskip("anthropic")
-    from energypilot.agent.llm.anthropic_client import AnthropicClient
+def test_groq_adapter_error_mapping(silent_server):
+    pytest.importorskip("groq")
+    from types import SimpleNamespace
 
-    client = AnthropicClient("model-under-test", api_key="test-key", max_retries=0, base_url=_closed_port())
-    with pytest.raises(LLMProviderError):
-        client.chat("system", MSGS, TOOLS, max_tokens=256, timeout_s=2)
-    slow = AnthropicClient("model-under-test", api_key="test-key", max_retries=0, base_url=silent_server)
+    from energypilot.agent.llm.groq_client import GroqClient
+
+    client = GroqClient("model-under-test", api_key="test-key", base_url=_closed_port(), max_retries=0)
+    with pytest.raises(LLMProviderError):  # generous timeout: Windows takes ~2 s to refuse a closed localhost port
+        client.chat("system", MSGS, TOOLS, max_tokens=256, timeout_s=10)
+    slow = GroqClient("model-under-test", api_key="test-key", base_url=silent_server, max_retries=0)
     with pytest.raises(LLMTimeoutError):
         slow.chat("system", MSGS, TOOLS, max_tokens=256, timeout_s=0.5)
-    converted = AnthropicClient._to_api_messages(
-        [Message(role="user", text="q"), Message(role="assistant", text="a", provider_payload=[{"type": "text", "text": "a"}]),
-         Message(role="tool_results", tool_results=[ToolResult("t1", "noop", "{}"), ToolResult("t2", "noop", "{}", True)])]
-    )  # fmt: skip
-    assert converted[1]["content"] == [{"type": "text", "text": "a"}]
-    assert converted[2]["role"] == "user" and len(converted[2]["content"]) == 2  # one message for all results
-    assert AnthropicClient._to_api_tools(TOOLS)[0]["strict"] is True
-
-
-def test_openai_adapter_error_mapping(silent_server, monkeypatch):
-    pytest.importorskip("openai")
-    from energypilot.agent.llm.openai_compat import OpenAICompatibleClient
-
-    client = OpenAICompatibleClient("model-under-test", api_key="test-key", base_url=_closed_port(), max_retries=0)
-    with pytest.raises(LLMProviderError):
-        client.chat("system", MSGS, TOOLS, max_tokens=256, timeout_s=2)
-    slow = OpenAICompatibleClient("model-under-test", api_key="test-key", base_url=silent_server, max_retries=0)
-    with pytest.raises(LLMTimeoutError):
-        slow.chat("system", MSGS, TOOLS, max_tokens=256, timeout_s=0.5)
-    converted = OpenAICompatibleClient._to_api_messages(
+    converted = GroqClient._to_api_messages(
         "sys", [Message(role="user", text="q"), Message(role="tool_results", tool_results=[ToolResult("t1", "noop", "{}")])]
     )
     assert converted[0] == {"role": "system", "content": "sys"}
     assert converted[2] == {"role": "tool", "tool_call_id": "t1", "content": "{}"}
+    assert "strict" not in GroqClient._to_api_tools(TOOLS)[0]["function"]
+    call = SimpleNamespace(id="c1", function=SimpleNamespace(name="noop", arguments='{"a": 1}'))
+    replay = GroqClient._replay_payload(SimpleNamespace(content=None, tool_calls=[call], reasoning="hidden"))
+    assert replay == {"role": "assistant", "content": "",
+                      "tool_calls": [{"id": "c1", "type": "function", "function": {"name": "noop", "arguments": '{"a": 1}'}}]}  # fmt: skip

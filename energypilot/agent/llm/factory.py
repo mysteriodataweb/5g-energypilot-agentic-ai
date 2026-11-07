@@ -62,26 +62,19 @@ def create_llm_client(settings: LLMSettings) -> LLMClient | None:
     """Return a client, or ``None`` when no LLM is configured. Raises on invalid configuration."""
     if settings.provider in ("none", "", "off", "fallback"):
         return None
-    if settings.provider == "anthropic":
-        from energypilot.agent.llm.anthropic_client import AnthropicClient
+    if settings.provider == "groq":
+        from energypilot.agent.llm.groq_client import GroqClient
 
-        return AnthropicClient(
+        api_key = os.getenv("GROQ_API_KEY", "").strip()
+        if not api_key:
+            raise LLMConfigurationError("GROQ_API_KEY must be set for the groq provider")
+        return GroqClient(
             settings.model,
-            api_key=os.getenv("ANTHROPIC_API_KEY") or None,
+            api_key=api_key,
             max_retries=settings.max_retries,
             effort=settings.effort,
         )
-    if settings.provider in ("openai", "openai_compatible"):
-        from energypilot.agent.llm.openai_compat import OpenAICompatibleClient
-
-        return OpenAICompatibleClient(
-            settings.model,
-            api_key=os.getenv("OPENAI_API_KEY") or None,
-            base_url=os.getenv("OPENAI_BASE_URL") or None,
-            max_retries=settings.max_retries,
-            effort=settings.effort,
-        )
-    raise LLMConfigurationError(f"unknown LLM_PROVIDER '{settings.provider}' (expected none, anthropic or openai)")
+    raise LLMConfigurationError(f"unknown LLM_PROVIDER '{settings.provider}' (expected none or groq)")
 
 
 def try_create_llm_client(config: AppConfig) -> tuple[LLMClient | None, LLMSettings, str | None]:

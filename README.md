@@ -43,7 +43,7 @@ for why the LLM orchestrates decision models instead of replacing safety-critica
 | 3 | rule-based controller | done, tested |
 | 4 | MILP optimiser (PuLP + HiGHS; CBC optional), MPC execution, infeasibility diagnosis | done, tested |
 | 5 | independent safety validator, runtime shield, hash-chained audit log | done, tested |
-| 6 | LLM orchestration agent (Anthropic / OpenAI-compatible adapters) + deterministic fallback | done, tested with a scripted test double; **not run against a real LLM** (no API key in the build environment) |
+| 6 | LLM orchestration agent (Groq adapter) + deterministic fallback | done, tested with a scripted test double; **not run against a real LLM** (no API key in the build environment) |
 | 7 | evaluation framework (episodes, metrics, CIs, paired tests, benchmark) | done, tested; reference run in `results/reference/` |
 | 8 | Streamlit + Plotly dashboard | done, tested (headless) |
 | 9 | full test suite, reproducible demonstration | done |
@@ -156,8 +156,8 @@ cp .env.example .env
 ```
 
 Leave `LLM_PROVIDER=none` for the deterministic fallback mode (no external call). To use an LLM, set
-`LLM_PROVIDER` (`anthropic` or `openai` for any OpenAI-compatible endpoint, with `OPENAI_BASE_URL` if
-needed), `LLM_MODEL` and the matching API key. Optionally set `LLM_PRICE_INPUT_PER_MTOK` /
+`LLM_PROVIDER=groq`, `LLM_MODEL` (a Groq model with tool calling, e.g. `qwen/qwen3.8-27b`) and
+`GROQ_API_KEY` (from https://console.groq.com/keys). Optionally set `LLM_PRICE_INPUT_PER_MTOK` /
 `LLM_PRICE_OUTPUT_PER_MTOK` to estimate inference cost; otherwise cost is reported as unknown. Never
 commit `.env`.
 

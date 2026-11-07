@@ -21,7 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dashboard = ["streamlit>=1.50", "plotly>=5.20"]
-llm = ["anthropic>=0.40", "openai>=1.40"]
+llm = ["groq>=0.11", "truststore>=0.9"]
 dev = ["pytest>=8.0"]
 
 [tool.setuptools.packages.find]

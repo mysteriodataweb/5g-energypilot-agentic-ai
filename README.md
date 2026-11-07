@@ -187,6 +187,13 @@ Launch the dashboard:
 streamlit run dashboard/app.py
 ```
 
+The dashboard has two pages (sidebar navigation): **app**, the research view comparing the three
+approaches side by side, and **Operator view**, a simplified console for the person giving
+instructions. The operator view runs only the agent and follows the operator's workflow:
+write an instruction, confirm the plain-language interpretation (nothing is applied before that),
+apply it, read the decision and what to do next, then check compliance with each constraint, alerts,
+battery/grid charts and the audit log.
+
 Reproduce the reference evaluation (about 8 minutes on 4 cores; 840 + 150 + 50 episodes and the benchmark):
 
 ```bash

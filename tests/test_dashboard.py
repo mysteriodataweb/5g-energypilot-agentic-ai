@@ -55,3 +55,46 @@ def test_app_runs_a_simulation():
     assert not at.exception
     assert any("Simulation complete" in s.value for s in at.success)
     assert len(at.get("plotly_chart")) >= 5
+
+
+def _operator_page():
+    from streamlit.testing.v1 import AppTest
+
+    at = AppTest.from_file(str(DASHBOARD / "pages" / "1_Operator_view.py"), default_timeout=240)
+    at.run()
+    for cb in at.sidebar.checkbox:  # never call a real LLM from the test suite
+        cb.uncheck()
+    return at.run()
+
+
+def _confirm_and_apply(at, text):
+    at.text_area[0].set_value(text).run()
+    assert at.button[0].disabled  # nothing is applied before the operator confirms the interpretation
+    next(c for c in at.checkbox if c.label.startswith("Yes")).check().run()
+    at.button[0].click().run()
+    assert not at.exception
+    return [m.value for m in at.markdown if m.value[:1] in "✅❌"]
+
+
+def test_operator_view_confirms_applies_and_checks():
+    at = _operator_page()
+    assert not at.exception
+    checks = _confirm_and_apply(at, "Keep at least 80% battery until 23:00 and limit grid import to 3 kW from 18:00 to 20:00")
+    assert any("Instruction applied" in s.value for s in at.success)
+    assert any("Battery ≥ 80 %" in c for c in checks) and any("Grid import ≤ 3 kW" in c for c in checks)
+    assert all(c.startswith("✅") for c in checks)
+    assert len(at.get("plotly_chart")) == 2
+
+
+def test_operator_view_flags_a_missed_limit():
+    # Accepted on forecasts, but the realised day overshoots this very tight limit: the view must show it.
+    checks = _confirm_and_apply(_operator_page(), "Keep at least 80% battery until 23:00 and limit grid import to 0.5 kW from 20:00 to 22:00")
+    assert any(c.startswith("❌") and "0.5 kW" in c for c in checks)
+
+
+def test_operator_view_blocks_vague_instruction_without_llm():
+    at = _operator_page()
+    at.text_area[0].set_value("Continuously monitor network traffic and battery").run()
+    assert any("could not turn this into enforceable constraints" in w.value for w in at.warning)
+    assert all(c.disabled for c in at.checkbox if not c.label.startswith("Use the language model"))
+    assert at.button[0].disabled
